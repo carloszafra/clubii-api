@@ -10,7 +10,7 @@ export class AuthController {
 
     constructor( private authSvc: AuthService ){}
 
-    @Post('/regsiter')
+    @Post('/register')
     public async register( @Body() user: userDto): Promise<RegistrationStatus>{
         const result: RegistrationStatus = await this.authSvc.register( user );
         if(!result.success) throw new HttpException( result.message, HttpStatus.BAD_REQUEST);

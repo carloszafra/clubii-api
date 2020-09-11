@@ -1,4 +1,4 @@
-import { Controller, Post, Get, UseGuards, Res, Req, HttpStatus, Body, Param, NotAcceptableException, NotImplementedException, NotFoundException, UseInterceptors, UploadedFile, HttpException } from '@nestjs/common';
+import { Controller, Post, Get, UseGuards, Res, Req, HttpStatus, Body, Param, NotAcceptableException, NotImplementedException, NotFoundException, UseInterceptors, UploadedFile, HttpException, Delete } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtPayload } from 'src/auth/interfaces/payload.interface';
@@ -7,6 +7,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from 'src/utils/file-upload.utils';
 import { fileURLToPath } from 'url';
+import { RSA_NO_PADDING } from 'constants';
 
 @Controller('user')
 export class UserController {
@@ -78,6 +79,18 @@ export class UserController {
         if(!userUpdated) throw new HttpException('error', HttpStatus.BAD_REQUEST);
 
         return res.status(HttpStatus.OK).json(userUpdated);
+    }
+
+    @Delete('/:id')
+    @UseGuards(AuthGuard())
+    async deleteUser( @Res() res, @Param('id') userId, @Req() req:any){
+        const user = <JwtPayload>req.user;
+        if(user._id != userId) throw new NotAcceptableException(HttpStatus.UNAUTHORIZED, 'no autorizado');
+
+        const userDeleted = await this.userSvc.deleteUser(user._id);
+        if(!userDeleted) throw new HttpException('error al eliminar', HttpStatus.BAD_REQUEST);
+
+        return res.status(HttpStatus.OK).json({message: 'user deleted'});
     }
 
 }

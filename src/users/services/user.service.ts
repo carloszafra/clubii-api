@@ -15,6 +15,7 @@ export class UserService {
        newUser.avatarUrl, newUser.coverUrl = null;
        newUser.password = await newUser.hashPassword( newUser.password );
        const savedUser= await newUser.save();
+       console.log(savedUser);
        return savedUser;
     }
 
@@ -25,11 +26,13 @@ export class UserService {
        const correctPassword = user.comparePasswords( logedUser.password );
        if(!correctPassword) throw new MethodNotAllowedException('not authorized');
 
+       console.log(user);
+
        return user;
     }
 
     async findByEmail( email: string ): Promise<userI> {
-        const user = await this.userModel.findOne({email: email});
+        const user = await this.userModel.findOne({email: email}, 'name email avatarUrl coverUrl timestamp ');
         return user;
     }
 

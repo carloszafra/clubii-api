@@ -26,4 +26,20 @@ export class PublicationsService {
         const publications = await this.publiModel.find().populate('creator', 'email username');
         return publications;
     }
+
+    async getFollowedPublications(): Promise<publicationI> {
+        return 
+    }
+
+    async getUserPublications( userId: string, page: number): Promise<any>{
+        const publications = await Promise.all([
+            this.publiModel.find({creator: userId})
+             .skip(page).limit(5)
+             .populate('creator', '_id name email username avatarUrl'),
+            
+            this.publiModel.countDocuments({creator: userId})
+        ]);
+
+        return publications;
+    }
 } 

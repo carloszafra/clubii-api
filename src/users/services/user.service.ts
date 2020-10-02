@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, MethodNotAllowedException } from '@nestjs/common';
+import { Injectable, NotFoundException, MethodNotAllowedException, HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { userI } from '../users.interface/user.interface';
@@ -11,12 +11,18 @@ export class UserService {
     constructor( @InjectModel('User') private userModel: Model<userI> ){}
 
     async createUser( user: userDto ): Promise<userI> {
-       const newUser = new this.userModel(user);
-       newUser.avatarUrl, newUser.coverUrl = null;
-       newUser.password = await newUser.hashPassword( newUser.password );
-       const savedUser= await newUser.save();
-       console.log(savedUser);
-       return savedUser;
+      try{
+        const emailExists = await this.userModel.findOne({email: user.email});
+        if(emailExists) throw new HttpException('el correo ya existe', HttpStatus.NOT_ACCEPTABLE);
+
+        const newUser: userI = new this.userModel(user);
+            newUser.password = await newUser.hashPassword( newUser.password );
+            newUser.avatarUrl = null;
+            const savedUser = await newUser.save();
+            return savedUser;
+      }catch(error){
+        throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
 
     async loginUser( logedUser: loguserDto ): Promise<userI> {
@@ -38,6 +44,7 @@ export class UserService {
 
     async findById( userId: string ): Promise<userI> {
         const user = await this.userModel.findOne({_id: userId})
+        
         return user;
     }
 
@@ -47,13 +54,23 @@ export class UserService {
     }
 
     async updateUser(userDto: userDto, id: string): Promise<userI> {
-        const user = await this.userModel.findByIdAndUpdate(id, userDto, {new: true});
+        const user = await this.userModel
+        .findByIdAndUpdate(id, userDto, {new: true, select: 'name email avatarUrl coverUrl timestamp'});
         return user;
     }
 
     async deleteUser(id: string){
        const userDeleted = await this.userModel.findOneAndDelete({_id:id});
        return userDeleted;
+    }
+
+    async getUsers( page: number ): Promise<any> {
+       const users = await Promise.all([
+           this.userModel.find({}, 'name email username avatarUrl country description coverUrl').skip(page).limit(5),
+           this.userModel.countDocuments()
+       ]);
+
+       return users;
     }
 
     async uploadAvatar(userId: string, avatarUrl: string): Promise<userI> {

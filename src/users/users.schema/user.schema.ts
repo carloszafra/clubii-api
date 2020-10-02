@@ -2,12 +2,12 @@ import { Schema } from 'mongoose';
 import { hash, compare, genSalt} from 'bcrypt';
 
 export const UserSchema = new Schema({
-    name: { type: String, required: true},
+    name: { type: String},
     description: String,
     username: { type: String, required: true, unique: true},
     email: { type: String, required: true, unique: true},
     birthday: String,
-    country: { type: String, required: true},
+    country: { type: String, required: true, default: 'worldwide'},
     twitter: String,
     instagram: String,
     avatarUrl: String,

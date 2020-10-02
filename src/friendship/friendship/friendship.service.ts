@@ -19,7 +19,7 @@ export class FriendshipService {
           return friendship;
       
         } catch (error) {
-            throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR); 
         }
     }
 
@@ -46,10 +46,12 @@ export class FriendshipService {
         }
     }
 
-    async getMyRequests( receiverId: string ): Promise<friendshipI[]>{
-        const requests = await this.friendModel.find({receiver: receiverId, accepted: false}).populate('emmiter receiver');
-        if(!requests.length) throw new HttpException('you dont have requests', HttpStatus.NOT_FOUND);
+    async getMyRequests( receiverId: string, page: number ): Promise<any[]>{
+        const requests = await Promise.all([
+          this.friendModel.find({receiver: receiverId, accepted: false}).populate('emmiter receiver').skip(page).limit(5),
+          this.friendModel.countDocuments({receiver: receiverId})
+        ]);
         
-        return requests;
+       return requests;
     }
 }

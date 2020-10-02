@@ -1,8 +1,9 @@
-import { Controller, Post, UseGuards, Req, Res, Body, InternalServerErrorException, HttpException, HttpStatus, Get } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req, Res, Body, InternalServerErrorException, HttpException, HttpStatus, Get, Param, Query } from '@nestjs/common';
 import { PublicationsService } from './publications.service';
 import { AuthGuard } from '@nestjs/passport';
 import { publicationDto } from '../publicationDto/publication.dto';
 import { JwtPayload } from 'src/auth/interfaces/payload.interface';
+import { Request, Response } from 'express';
 
 @Controller('publications')
 export class PublicationsController {
@@ -23,8 +24,22 @@ export class PublicationsController {
     }
 
     @Get('/')
+    @UseGuards(AuthGuard())
     async getAll( @Res() res){
         const publications = await this.publicationSvc.getAllPublications();
         return res.status(HttpStatus.OK).json(publications);
+    }
+
+    @Get('/user/:id?')
+    @UseGuards(AuthGuard())
+    async getUserPublications
+    (@Res() res: Response, @Req()req: Request, @Param('id')userId: any, @Query('from')from: any){
+        const page = from ? Number(from) : 0;
+        const reqUser = <JwtPayload>req.user;
+        const user: string = userId ? userId : reqUser._id;
+
+        const [publications, total] = await this.publicationSvc.getUserPublications(user, page);
+
+        return res.status(HttpStatus.OK).json({publications, total});
     }
 } 

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, UseGuards, Res, Req, HttpStatus, Body, Param, NotAcceptableException, NotImplementedException, NotFoundException, UseInterceptors, UploadedFile, HttpException, Delete } from '@nestjs/common';
+import { Controller, Post, Put, Get, UseGuards, Res, Req, HttpStatus, Body, Param, NotAcceptableException, NotImplementedException, NotFoundException, UseInterceptors, UploadedFile, HttpException, Delete, Query } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtPayload } from 'src/auth/interfaces/payload.interface';
@@ -6,8 +6,8 @@ import { userDto } from '../users.dto/user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from 'src/utils/file-upload.utils';
-import { fileURLToPath } from 'url';
-import { RSA_NO_PADDING } from 'constants';
+import { Request, Response } from 'express';
+
 
 @Controller('user')
 export class UserController {
@@ -23,7 +23,40 @@ export class UserController {
         return res.status(HttpStatus.OK).json({user: user});
     }
 
-    @Post('/edit/:id')
+    @Get('/')
+    @UseGuards(AuthGuard())
+    async getUsers(@Res() res: Response, @Query('from') from: any){
+        
+        const page = from ? Number(from) : 0;
+
+        const [users, total] = await this.userSvc.getUsers(page);
+
+        return res.status(HttpStatus.OK).json({users, total});
+    }
+
+    @Get('/logged')
+    @UseGuards(AuthGuard())
+    async getLoggedUser( @Res() res: Response, @Req() req: Request){
+        const user = <JwtPayload>req.user;
+        const logeduser = await this.userSvc.findById(user._id);
+
+        const userloged = {
+            name: logeduser.name,
+            description: logeduser.description,
+            username: logeduser.username,
+            birthday: logeduser.birthday,
+            country: logeduser.country,
+            email: logeduser.email,
+            avatarUrl: logeduser.avatarUrl,
+            twitter: logeduser.twitter,
+            instagram: logeduser.instagram,
+            coverUrl: logeduser.instagram
+        }
+
+        return res.status(HttpStatus.OK).json(userloged);
+    }
+
+    @Put('/edit/:id')
     @UseGuards(AuthGuard())
     async editUser( @Res() res, @Body()user: userDto, @Param('id') userId: any, @Req() req: any){ 
         if(userId != req.user._id) throw new NotAcceptableException(HttpStatus.UNAUTHORIZED, 'no autorizado');
@@ -43,7 +76,7 @@ export class UserController {
     }
 
     @Post('avatar/:id')
-    @UseGuards(AuthGuard())
+    @UseGuards(AuthGuard()) 
     @UseInterceptors(FileInterceptor('image', {
         storage: diskStorage({
             destination: './avatars',

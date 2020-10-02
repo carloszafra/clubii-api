@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Res, Param, Req, NotImplementedException, HttpStatus, Delete, Get } from '@nestjs/common';
+import { Controller, Post, UseGuards, Res, Param, Req, NotImplementedException, HttpStatus, Delete, Get, Query } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtPayload } from 'src/auth/interfaces/payload.interface';
@@ -28,7 +28,7 @@ export class FriendshipController {
         const accepted = await this.friendSvc.acceptRequest(receiver._id, friendshipId);
         if(!accepted) throw new NotImplementedException('no se acepto la solicitud');
 
-        return res.status(HttpStatus.OK).json(accepted);
+        return res.status(HttpStatus.OK).json(accepted); 
     }
 
     @Delete('reject/:id')
@@ -44,10 +44,12 @@ export class FriendshipController {
 
     @Get('requests')
     @UseGuards(AuthGuard())
-    async getMyRequests( @Res() res: Response, @Req() req: Request){
+    async getMyRequests( @Res() res: Response, @Req() req: Request, @Query('from') from: any){
+        
         const userLoged = <JwtPayload>req.user;
+        const page = from ? Number(from) : 0;
 
-        const requests = await this.friendSvc.getMyRequests(userLoged._id);
-        return res.status(HttpStatus.OK).json(requests);
+        const [requests, total] = await this.friendSvc.getMyRequests(userLoged._id, page);
+        return res.status(HttpStatus.OK).json({requests, total});
     }
 }

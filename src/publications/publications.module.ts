@@ -8,6 +8,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { publicationSchema } from './schemas/publication.schema';
 import { UserSchema } from 'src/users/users.schema/user.schema';
+import { followSchema } from '../follows/schema/follow.schema';
+import { friendshipSchema } from '../friendship/friendship.schema/friendship.schema';
 
 @Module({
   imports: [
@@ -15,7 +17,9 @@ import { UserSchema } from 'src/users/users.schema/user.schema';
       UsersModule,
       MongooseModule.forFeature([
         { name: 'Publication', schema: publicationSchema },
-        { name: 'User', schema: UserSchema }
+        { name: 'User', schema: UserSchema },
+        { name: 'Follow', schema: followSchema },
+        { name: 'Friendship', schema: friendshipSchema }
       ])
     ],  
   controllers: [PublicationsController],

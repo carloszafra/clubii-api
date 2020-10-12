@@ -7,19 +7,19 @@ import { comentI } from '../interface/coment.interface';
 @Injectable()
 export class ComentsService {
 
-    constructor( @InjectModel('Coment') private comentModel: Model<comentI> ){}
+    constructor( @InjectModel('Coment') private comentModel: Model<comentI>){}
 
-    async postComent( userId: string, coment: comentDto, pubId: string): Promise<comentI> {
-        
+    async postComent( userId: string, pubId: string, comentDto: comentDto ): Promise<comentI> {
+
         try {
-            const precoment = new this.comentModel(coment);
-            precoment.publication = pubId;
+            const precoment = new this.comentModel(comentDto);
             precoment.user = userId;
-            const newcoment = await precoment.save();
-            await newcoment.populate('user publication').execPopulate();
-            return newcoment;
+            precoment.publication = pubId;
+            const coment = await precoment.save();
+            await coment.populate('user publication').execPopulate();
+            return coment;
         } catch (error) {
-            throw new HttpException('comentario no ejecutado', HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('error al publicar comentario '+ error, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

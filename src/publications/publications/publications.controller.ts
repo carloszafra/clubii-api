@@ -42,4 +42,12 @@ export class PublicationsController {
 
         return res.status(HttpStatus.OK).json({publications, total});
     }
+    
+    @Get('/newsfeed')
+    @UseGuards(AuthGuard())
+    async getNewsfeedPubs
+    (@Res()res: Response, @Req()req: Request, @Query('from')from: any){
+        const page = from ? Number(from) : 0;
+        const user = <JwtPayload>req.user;
+    }
 } 

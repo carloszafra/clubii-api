@@ -1,8 +1,6 @@
-import { IsNotEmpty } from 'class-validator';
-
-export class comentDto {
-    user: string
+export class comentDto{
     publication: string;
-    @IsNotEmpty() content: string;
+    user: string;
+    content: string;
     timestamp: Date
 }

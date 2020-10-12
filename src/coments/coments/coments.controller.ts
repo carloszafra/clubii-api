@@ -10,12 +10,12 @@ export class ComentsController {
 
     constructor( private comentSvc: ComentsService ){}
 
-    @Post('/new/:id')
+    @Post('/:id')
     @UseGuards(AuthGuard())
     async postComent( @Res()res: Response, @Req()req: Request, @Param('id')pubId: any, @Body()comentDto: comentDto ){
         const user = <JwtPayload>req.user;
 
-        const coment = await this.comentSvc.postComent(user._id, comentDto, pubId);
+        const coment = await this.comentSvc.postComent(user._id, pubId, comentDto);
         return res.status(HttpStatus.OK).json(coment);
     }
 }

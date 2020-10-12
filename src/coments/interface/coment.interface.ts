@@ -1,8 +1,8 @@
-import { Document } from 'mongoose';
+import { Document } from "mongoose"
 
 export interface comentI extends Document{
-    user: string
     publication: string;
+    user: string;
     content: string;
     timestamp: Date
 }

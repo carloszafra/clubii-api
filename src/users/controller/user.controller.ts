@@ -68,11 +68,13 @@ export class UserController {
     }
 
     @Get('/:id')
+    @UseGuards(AuthGuard()) 
     async getUser( @Res() res, @Param('id') userId: string){
-        const user = this.userSvc.findById(userId);
+        console.log(userId)
+        const user = await this.userSvc.findById(userId);
         if(!user) throw new NotFoundException;
 
-        return res.status(HttpStatus.OK).json({user});
+        return res.status(HttpStatus.OK).json({user: user});
     }
 
     @Post('avatar/:id')

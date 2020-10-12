@@ -38,6 +38,7 @@ export class AuthService {
 
        const identity = {
            _id: userLoged._id,
+           name: userLoged.name,
            email: userLoged.email,
            username: userLoged.username,
            coverUrl: userLoged.coverUrl,

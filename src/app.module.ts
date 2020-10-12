@@ -15,8 +15,12 @@ import { FriendshipModule } from './friendship/friendship.module';
 import { AlbumsModule } from './albums/albums.module';
 import { GroupRequestsModule } from './group-requests/group-requests.module';
 import { GroupsModule } from './groups/groups.module';
+import { LikesModule} from './likes/likes.module';
 import { ComentsModule } from './coments/coments.module';
-import { LikesModule } from './likes/likes.module';
+
+
+
+
 
 @Module({
   imports: [
@@ -30,8 +34,9 @@ import { LikesModule } from './likes/likes.module';
     AlbumsModule,
     GroupRequestsModule,
     GroupsModule,
+    LikesModule,
     ComentsModule,
-    LikesModule
+   
   ],
   controllers: [AppController],
   providers: [AppService],

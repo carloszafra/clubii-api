@@ -1,19 +1,17 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { AuthService } from 'src/auth/auth.service';
-import { publicationSchema } from 'src/publications/schemas/publication.schema';
-import { UserSchema } from 'src/users/users.schema/user.schema';
 import { ComentsController } from './coments/coments.controller';
 import { ComentsService } from './coments/coments.service';
+import { AuthModule } from '../auth/auth.module';
+import { MongooseModule } from '@nestjs/mongoose';
 import { comentSchema } from './schema/coment.schema';
+import { UserSchema } from 'src/users/users.schema/user.schema';
 
 @Module({
-  imports: [
-    AuthService,
+  imports: [ 
+    AuthModule,
     MongooseModule.forFeature([
-      { name: 'Coment', schema: comentSchema },
-      { name: 'User', schema: UserSchema },
-      { name: 'Publication', schema: publicationSchema }
+      {name: 'Coment', schema: comentSchema },
+      {name: 'User', schema: UserSchema }
     ])
   ],
   controllers: [ComentsController],

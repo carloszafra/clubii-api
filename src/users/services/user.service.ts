@@ -43,9 +43,13 @@ export class UserService {
     }
 
     async findById( userId: string ): Promise<userI> {
-        const user = await this.userModel.findOne({_id: userId})
-        
-        return user;
+        try{
+            const user = await this.userModel.findOne({_id: userId})
+            console.log(user)
+            return user;
+        }catch(error){
+           throw new HttpException(`error: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
     async findByPayload( {_id}: any ):Promise<userI> {

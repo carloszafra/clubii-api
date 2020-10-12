@@ -4,7 +4,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { UserSchema } from 'src/users/users.schema/user.schema';
 import { LikesController } from './likes/likes.controller';
 import { LikesService } from './likes/likes.service';
-import { likeSchema } from './schema/likes.schema';
+import { likeSchema } from './schema/likes.schema'; 
 
 @Module({
   imports: [

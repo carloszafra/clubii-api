@@ -5,6 +5,8 @@ import { PublicationsService } from './publications/publications.service';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { FollowsModule } from '../follows/follows.module';
+import { FriendshipModule } from '../friendship/friendship.module';
 
 import { publicationSchema } from './schemas/publication.schema';
 import { UserSchema } from 'src/users/users.schema/user.schema';
@@ -15,6 +17,8 @@ import { friendshipSchema } from '../friendship/friendship.schema/friendship.sch
   imports: [
       AuthModule,
       UsersModule,
+      FollowsModule,
+      FriendshipModule,
       MongooseModule.forFeature([
         { name: 'Publication', schema: publicationSchema },
         { name: 'User', schema: UserSchema },

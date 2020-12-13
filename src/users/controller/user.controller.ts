@@ -16,7 +16,7 @@ export class UserController {
 
     @Get('/prueba')
     @UseGuards(AuthGuard())
-    async prueba( @Res() res, @Req() req: any){
+    async prueba( @Res() res, @Req() req: any){ 
         const user = <JwtPayload>req.user;
         console.log(`user: ${user}`);
 

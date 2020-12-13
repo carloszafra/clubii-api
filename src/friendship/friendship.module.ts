@@ -16,6 +16,7 @@ import { UserSchema } from 'src/users/users.schema/user.schema';
     ])
   ],
   controllers: [FriendshipController],
-  providers: [FriendshipService]
+  providers: [FriendshipService],
+  exports: [FriendshipService]
 })
 export class FriendshipModule {}

@@ -25,10 +25,10 @@ export class GroupsService {
         return groups;
     }
 
-    async createGroup( creatorId: string, groupDto: groupDto ): Promise<groupI> {
+    async createGroup( groupDto: groupDto ): Promise<groupI> {
         try {
             const newGroup = new this.groupModel(groupDto);
-            newGroup.creator = creatorId;
+            //newGroup.creator = creatorId;
             const savedGroup = await newGroup.save();
             await savedGroup.populate('creator', 'name username avatarUrl').execPopulate();
             return savedGroup;

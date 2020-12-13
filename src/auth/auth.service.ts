@@ -35,19 +35,24 @@ export class AuthService {
     async login( user: loguserDto ): Promise<any>{
        const userLoged = await this.userSvc.loginUser( user );
        console.log(userLoged);
-
-       const identity = {
-           _id: userLoged._id,
-           name: userLoged.name,
-           email: userLoged.email,
-           username: userLoged.username,
-           coverUrl: userLoged.coverUrl,
-           avatarUrl: userLoged.avatarUrl,
-           timestamp: userLoged.timestamp
+       const token = this.createToken(userLoged._id)
+ 
+        const identity = {
+            _id: userLoged._id,
+            name: userLoged.name,
+            email: userLoged.email,
+            username: userLoged.username,
+            coverUrl: userLoged.coverUrl,
+            avatarUrl: userLoged.avatarUrl,
+            timestamp: userLoged.timestamp,
+            twitter: userLoged.twitter,
+            instagram: userLoged.instagram,
+            description: userLoged.description,
+            country: userLoged.country,
+            birthday: userLoged.birthday
         }
 
-       const token = this.createToken( userLoged._id );
-       return { user: identity, ...token };
+        return { user: identity, ...token};
     }
 
     private createToken({_id}: userI): any {

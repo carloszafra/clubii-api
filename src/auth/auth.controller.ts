@@ -1,9 +1,12 @@
-import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus, UseGuards, Res, Req, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { userDto } from 'src/users/users.dto/user.dto';
 import { RegistrationStatus } from './interfaces/registration.interface';
 import { loguserDto } from 'src/users/users.dto/loguser.dto';
 import { userI } from 'src/users/users.interface/user.interface';
+import { AuthGuard } from '@nestjs/passport';
+import { Request, Response } from 'express';
+import { JwtPayload } from './interfaces/payload.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -24,5 +27,10 @@ export class AuthController {
         if(!userLoged) throw new HttpException('password or email incorrect', HttpStatus.BAD_REQUEST);
 
         return userLoged;
+    }
+
+    @Get('/renew')
+    @UseGuards(AuthGuard())
+    public async renewToken( @Res()res: Response, @Req()req: Request ){
     }
 }

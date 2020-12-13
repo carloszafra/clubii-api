@@ -7,7 +7,7 @@ import { GroupsService } from './groups.service';
 
 @Controller('groups')
 export class GroupsController {
-
+ 
     constructor( private groupSvc: GroupsService ){}
 
     @Get('/')
@@ -21,9 +21,8 @@ export class GroupsController {
 
     @Post('/new')
     @UseGuards(AuthGuard())
-    async createGroup( @Res() res: Response, @Req() req: Request, @Body() groupDto: groupDto ){
-        const user = <JwtPayload>req.user;
-        const group = await this.groupSvc.createGroup(user._id, groupDto);
+    async createGroup( @Res() res: Response, @Body() groupDto: groupDto ){
+        const group = await this.groupSvc.createGroup(groupDto);
         return res.status(HttpStatus.OK).json(group);
     }
 
@@ -64,4 +63,6 @@ export class GroupsController {
 
         return res.status(HttpStatus.OK).json({message: 'request deleted'});
     }
+
+    
 }

@@ -49,5 +49,9 @@ export class PublicationsController {
     (@Res()res: Response, @Req()req: Request, @Query('from')from: any){
         const page = from ? Number(from) : 0;
         const user = <JwtPayload>req.user;
+
+        const publications = await this.publicationSvc.getNewsfeedPubs(user._id, page);
+
+        return res.status(HttpStatus.OK).json(publications);
     }
 } 

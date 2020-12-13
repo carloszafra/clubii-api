@@ -52,7 +52,7 @@ export class UserService {
         }
     }
 
-    async findByPayload( {_id}: any ):Promise<userI> {
+    async findByPayload( {_id}: any ):Promise<userI> { 
         const user = await this.userModel.findOne({_id: _id});
         return user;
     }

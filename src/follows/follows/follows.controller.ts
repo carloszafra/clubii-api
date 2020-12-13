@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Res, Param, Req, NotImplementedException, HttpStatus, Get, Query } from '@nestjs/common';
+import { Controller, Post, UseGuards, Res, Param, Req, NotImplementedException, HttpStatus, Get, Query, Delete } from '@nestjs/common';
 import { FollowsService } from './follows.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtPayload } from 'src/auth/interfaces/payload.interface';
@@ -9,7 +9,7 @@ export class FollowsController {
 
     constructor( private followSvc: FollowsService ){}
 
-    @Post('/:id')
+    @Get('/:id')
     @UseGuards(AuthGuard())
     async createFollow( @Res() res, @Param('id') followedId: any, @Req() req: any ){
         const follower = <JwtPayload>req.user;
@@ -36,15 +36,36 @@ export class FollowsController {
 
     @Get('/following/:id?')
     @UseGuards(AuthGuard())
-    async getFollowing
+    async getFollowing 
     ( @Res() res: Response, @Req() req: Request, @Param('id') userId: any, @Query('from') from: any ){
        
         const follower = <JwtPayload>req.user;
+        console.log(follower._id + 'aqui fue')
         const user = userId ? userId : follower._id;
         const page = from ? Number(from) : 0;
 
-        const [following, total] = await this.followSvc.getFollowing(user, page);
+        const [following, total] = await this.followSvc.getFollowing(user);
 
         return res.status(HttpStatus.OK).json({following, total});
+    }
+
+    @Get('/following/iden/:id')
+    @UseGuards(AuthGuard())
+    async getFollowingId(@Res() res: Response, @Req() req: Request, @Param('id') userId: any ){
+        const follower = <JwtPayload>req.user;
+
+        const followings = await this.followSvc.getFollowingId(follower._id)
+
+        return res.status(HttpStatus.OK).json(followings)
+    }
+
+    @Delete('/:id')
+    @UseGuards(AuthGuard())
+    async deleteFollow(@Res() res: Response, @Req() req: Request, @Param('id') followedId: any){
+        const user = <JwtPayload>req.user;
+
+        const deleted = await this.followSvc.deleteFollow(user._id, followedId);
+
+        return res.status(HttpStatus.OK).json({message: `Follow deleted: ${deleted}`});
     }
 }
